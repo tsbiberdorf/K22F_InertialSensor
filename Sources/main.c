@@ -60,6 +60,7 @@ void TestPrint(void *pvParameters)
 {
 	int16_t X,Y,Z;
 	uint8_t status;
+	uint8_t whoAmI;
 	bool enableState;
 	int32_t delay=100;
 	int32_t getFlag = 0;
@@ -72,16 +73,39 @@ void TestPrint(void *pvParameters)
 	{
 		delay = 500;
 	}
-	FX1_Init();
+	status = FX1_Init();
+	if(status)
+	{
+		printf("problem init FX1\r\n");
+	}
 
 	status = FX1_isEnabled(&enableState);
-	printf("enableState: %d",enableState);
+	if(status)
+	{
+		printf("problem with FX1\r\n");
+	}
+	else
+	{
+		printf("enableState: %d\r\n",enableState);
+	}
+
+	FX1_CalibrateZ1g();
+
+	status =  FX1_WhoAmI(&whoAmI);
+	if(status)
+	{
+		printf("problem with FX1\r\n");
+	}
+	else
+	{
+		printf("whoami: %X\r\n",whoAmI);
+	}
 
 	for(;;)
 	{
-		X = FX1_GetXmg();
-		Y = FX1_GetYmg();
-		Z = FX1_GetZmg();
+		X = FX1_GetX();
+		Y = FX1_GetY();
+		Z = FX1_GetZ();
 
 		printf("%d %d %d\r\n", X,Y,Z);
 		vTaskDelay(delay);
